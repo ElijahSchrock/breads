@@ -6,6 +6,11 @@ require('dotenv').config();
 const PORT = process.env.PORT;
 const app = express();
 
+//MIDDLEWARE || Before the clients request hit the path. It gets intercepted through middleware and does this process.
+app.set('views', __dirname + '/views') //defining which folder were putting the view files inside
+app.set('view engine', 'jsx') //setting the view engine ((jsx))
+app.engine('jsx', require('express-react-views').createEngine()); //intializing the jsx
+
 //ROUTES
 app.get('/', (req, res) => {
     res.send('Welcome to an Awesome App about Breads!');
