@@ -6,7 +6,8 @@ const Bread = require('../models/bread');
 breads.get('/', (req, res) => {
     res.render('Index', 
     {
-        breads: Bread
+        breads: Bread,
+        title: 'Index Page'
     })
 })
 
