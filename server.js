@@ -1,4 +1,5 @@
 const express = require('express');
+const { get } = require('express/lib/response');
 const res = require('express/lib/response');
 
 //CONFIG
@@ -10,6 +11,8 @@ const app = express();
 app.set('views', __dirname + '/views') //defining which folder were putting the view files inside
 app.set('view engine', 'jsx') //setting the view engine ((jsx))
 app.engine('jsx', require('express-react-views').createEngine()); //intializing the jsx
+//adding CSS
+app.use(express.static('public'))
 
 //ROUTES
 app.get('/', (req, res) => {
@@ -19,6 +22,11 @@ app.get('/', (req, res) => {
 //BREADS
 const breadsController = require('./controllers/breads_controller');
 app.use('/breads', breadsController);
+
+//404 Page
+app.get('*', (req, res) => {
+    res.send('404')
+})
 
 //LISTEN
 app.listen(PORT, () => {
