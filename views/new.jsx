@@ -6,7 +6,7 @@ function New () {
     return (
       <Default>
         <h2>Add a new bread</h2>
-        <form >
+        <form action='/breads' method='POST'>
           <label htmlFor="name">Name</label>
           <input
             type="text"
