@@ -6,9 +6,9 @@ const Bread = require('../models/bread');
 breads.get('/', (req, res) => {
   console.log("Index route Works")
   Bread.find()
-    .then(foundBreads => {
+    .then(foundBread => {
       res.render('index', {
-        breads: foundBreads,
+        breads: foundBread,
         title: 'Index Page'
       })
    })
@@ -23,24 +23,27 @@ breads.get('/new', (req, res) => {
 })
 
   //EDIT
-breads.get('/:indexArray/edit', (req, res) => {
-    res.render('edit', {
-      bread: Bread[req.params.indexArray],
-      index: req.params.indexArray
-    })
+  breads.get('/:id/edit', (req, res) => {
+    Bread.findById(req.params.id) 
+      .then(foundBread => { 
+        res.render('edit', {
+          bread: foundBread 
+        })
+      })
   })
-
 // SHOW
 breads.get('/:id', (req, res) => {
+  console.log('show route works')
   Bread.findById(req.params.id.toString())
       .then(foundBread => {
           res.render('show', {
-              bread: foundBread,
-              index: id
+            bread: foundBread
           })
+          console.log('promise')
       })
       .catch(err => {
         res.render('error404');
+        console.log('404')
       })
 })
 
@@ -59,21 +62,26 @@ breads.post('/', (req, res) => {
   res.redirect('/breads')
 })
 
-
-  // DELETE
-breads.delete('/:indexArray', (req, res) => {
-  Bread.splice(req.params.indexArray, 1)
-  res.status(303).redirect('/breads')
-})
-  
   // UPDATE
-  breads.put('/:arrayIndex', (req, res) => {
+  breads.put('/:id', (req, res) => {
     if(req.body.hasGluten === 'on'){
       req.body.hasGluten = true
     } else {
       req.body.hasGluten = false
     }
-    Bread[req.params.arrayIndex] = req.body
-    res.redirect(`/breads/${req.params.arrayIndex}`)
+    Bread.findByIdAndUpdate(req.params.id, req.body, { new: true }) 
+      .then(updatedBread => {
+        console.log(updatedBread) 
+        res.redirect(`/breads/${req.params.id}`) 
+      })
   })
+
+  // DELETE
+  breads.delete('/:id', (req, res) => {
+    Bread.findByIdAndDelete(req.params.id) 
+      .then(deletedBread => { 
+        res.status(303).redirect('/breads')
+      })
+  })
+  
 module.exports = breads
