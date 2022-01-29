@@ -1,17 +1,21 @@
 const express = require('express');
 const breads = express.Router();
 const Bread = require('../models/bread');
+const Baker = require('../models/baker');
 
 //INDEX 
 breads.get('/', (req, res) => {
-  console.log("Index route Works")
-  Bread.find()
-    .then(foundBread => {
-      res.render('index', {
-        breads: foundBread,
-        title: 'Index Page'
+  Baker.find()
+    .then(foundBakers => {
+      Bread.find()
+        .then(foundBread => {
+          res.render('index', {
+            breads: foundBread,
+            bakers: foundBakers,
+            title: 'Index Page'
+          })
       })
-   })
+  })
    .catch(err => {
     res.render('error404');
   })
@@ -19,27 +23,38 @@ breads.get('/', (req, res) => {
 
 //NEW
 breads.get('/new', (req, res) => {
-    res.render('new');
+  Baker.find()
+    .then(foundBakers => {
+      res.render('new', {
+        bakers: foundBakers
+      })
+    })
 })
 
   //EDIT
   breads.get('/:id/edit', (req, res) => {
-    Bread.findById(req.params.id) 
-      .then(foundBread => { 
-        res.render('edit', {
-          bread: foundBread 
-        })
+    Baker.find()
+      .then(foundBakers => {
+        Bread.findById(req.params.id) 
+          .then(foundBread => { 
+            res.render('edit', {
+              bread: foundBread,
+              bakers: foundBakers
+            })
+          })
       })
   })
 // SHOW
 breads.get('/:id', (req, res) => {
   console.log('show route works')
-  Bread.findById(req.params.id.toString())
+  Bread.findById(req.params.id)
+      .populate('baker')
       .then(foundBread => {
+        const bakedBy = foundBread.getBakedBy()
+        console.log(bakedBy)
           res.render('show', {
             bread: foundBread
           })
-          console.log('promise')
       })
       .catch(err => {
         res.render('error404');
