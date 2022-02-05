@@ -4,22 +4,15 @@ const Bread = require('../models/bread');
 const Baker = require('../models/baker');
 
 //INDEX 
-breads.get('/', (req, res) => {
-  Baker.find()
-    .then(foundBakers => {
-      Bread.find()
-        .then(foundBread => {
-          res.render('index', {
-            breads: foundBread,
-            bakers: foundBakers,
-            title: 'Index Page'
-          })
+    breads.get('/', async (req, res) => {
+      const foundBakers = await Baker.find().lean()
+      const foundBreads = await Bread.find().limit(5).lean()
+      res.render('index', {
+        breads: foundBreads,
+        bakers: foundBakers,
+        title: 'Index Page'
       })
-  })
-   .catch(err => {
-    res.render('error404');
-  })
-})
+    })
 
 //NEW
 breads.get('/new', (req, res) => {
@@ -50,8 +43,7 @@ breads.get('/:id', (req, res) => {
   Bread.findById(req.params.id)
       .populate('baker')
       .then(foundBread => {
-        const bakedBy = foundBread.getBakedBy()
-        console.log(bakedBy)
+        console.log(foundBread)
           res.render('show', {
             bread: foundBread
           })
